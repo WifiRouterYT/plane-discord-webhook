@@ -8,4 +8,9 @@ how to run (assuming you know how to setup a webhook and your app is open to the
 * clone repo and run `npm i` to install all packages
 * run `node index.js` and you should be good
 
+### What works so far
+* created work items
+* deleted work items
+* updated work items (though a bit buggy)
+
 all icons used are property of plane.so. i am not affiliated in any way with Plane or anybody involved.
