@@ -1,4 +1,5 @@
 # plane-discord-webhook
+middleman to convert https://plane.so/ webhooks into discord webhooks or something idfk
 heavy WIP
 
 how to run (assuming you know how to setup a webhook and your app is public):
