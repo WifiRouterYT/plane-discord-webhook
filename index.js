@@ -84,6 +84,39 @@ app.post(PAYLOAD_URL, bodyParser.raw({ type: 'application/json' }), (req, res) =
     console.log("[INFO] Incoming POST request!");
     const body = JSON.parse(req.body);
     console.log(body);
+
+    if(body["event"] === "issue_comment") {
+        if(body["action"] === "created") {
+            const embed = new MessageBuilder()
+                .setColor(8184715)
+                //.setTitle(body["data"]["name"])
+                //.setDescription(body["data"]["description_stripped"])
+                .setAuthor(`New comment on an item in ${WORKSPACE_NAME}!`, `${APP_URL}/plane-icon.png`)
+                .setFooter(body["activity"]["actor"]["display_name"], body["activity"]["actor"]["avatar_url"])
+                .addField('Comment', body["data"]["comment_stripped"], false)
+                .addField('Issue ID', body["data"]["issue"], false)
+            hook.send(embed)
+        } else if(body["action"] === "deleted") {
+            const embed = new MessageBuilder()
+                .setColor("#fa7970")
+                //.setTitle(body["data"]["name"])
+                //.setDescription(body["data"]["description_stripped"])
+                .setAuthor(`Comment deleted in ${WORKSPACE_NAME}`, `${APP_URL}/plane-icon.png`)
+                .setFooter(body["activity"]["actor"]["display_name"], body["activity"]["actor"]["avatar_url"])
+                .addField('Comment ID', body["data"]["id"], false)
+            hook.send(embed)
+        } else if(body["action"] === "updated") {
+            const embed = new MessageBuilder()
+                .setColor("#3e75fe")
+                //.setTitle(body["data"]["name"])
+                //.setDescription(body["data"]["description_stripped"])
+                .setAuthor(`Comment edited in ${WORKSPACE_NAME}`, `${APP_URL}/plane-icon.png`)
+                .setFooter(body["activity"]["actor"]["display_name"], body["activity"]["actor"]["avatar_url"])
+                .addField('New text', body["data"]["comment_stripped"], false)
+                .addField('Issue ID', body["data"]["issue"], false)
+            hook.send(embed)
+        }
+    }
     
     if(body["event"] === "issue") {
         if(body["action"] === "created") {
@@ -116,6 +149,11 @@ app.post(PAYLOAD_URL, bodyParser.raw({ type: 'application/json' }), (req, res) =
                 .setFooter(body["activity"]["actor"]["display_name"], body["activity"]["actor"]["avatar_url"])
             
             let fieldcounter = 0;
+
+            // ignore these, not important enough to send
+            if(body["activity"]["field"] === "state_id") return;
+            if(body["activity"]["field"] === "sort_order") return;
+
             if(body["activity"]["field"] === "description") {
                 embed.addField("Description", body["data"]["description_stripped"]);
                 fieldcounter++;
