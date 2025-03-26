@@ -121,7 +121,9 @@ app.post(PAYLOAD_URL, bodyParser.raw({ type: 'application/json' }), (req, res) =
                 fieldcounter++;
             }
             if(body["activity"]["field"] === "state") {
-                embed.addField("State", `${body["activity"]["old_value"]}  »  ${body["activity"]["new_value"]}`);
+                embed.addField("State", `${body["activity"]["old_value"]}  »  ${body["activity"]["new_value"]}`, true);
+                embed.addField("Actor", body["activity"]["actor"]["display_name"], true);
+                embed.setFooter(body["data"]["state"]["name"], images[body["data"]["state"]["group"]])
                 fieldcounter++;
             }
             if(body["activity"]["field"] === "priority") {
@@ -150,9 +152,13 @@ app.post(PAYLOAD_URL, bodyParser.raw({ type: 'application/json' }), (req, res) =
             }*/
             
             if(fieldcounter === 0) {
-                embed.setDescription("ID: `" + body["data"]["id"] + "`\nName: `" + body["data"]["name"] + "`\n\nSome changes are not listed.");
+                let oldvalue;
+                try {oldvalue = JSON.stringify(body["activity"]["old_value"]);} catch {oldvalue = "null";}
+                let newvalue;
+                try {newvalue = JSON.stringify(body["activity"]["new_value"]);} catch {newavlue = "null";}
+                embed.setDescription("ID: `" + body["data"]["id"] + "`\n\nField `" + body["activity"]["field"] + "` changed from `" + oldvalue + "` to `" + newvalue + "`");
             } else {
-                embed.setDescription("ID: `" + body["data"]["id"] + "`\nName: `" + body["data"]["name"] + "`\n\n__Changes:__");
+                embed.setDescription("ID: `" + body["data"]["id"] + "`\n\n__Changes:__");
             }
 
             // stop spamming my webhook :(
